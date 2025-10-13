@@ -1,0 +1,34 @@
+# Build artifacts and executables
+*.o
+*.a
+client
+server
+client_bonus
+server_bonus
+obj/
+libft/*.o
+libft/*.a
+
+# Debug folders
+*.dSYM/
+
+# Personal explanation files (keep local)
+guides/
+subject.md
+
+# Test scripts
+test_server.sh
+test_send.py
+
+# macOS
+.DS_Store
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# GitHub workflows (if not needed)
+.github/
