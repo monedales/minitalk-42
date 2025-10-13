@@ -100,7 +100,7 @@ Bit 0 (1) → SIGUSR2 → Server builds: 01000001 = 'A' ✓
 │     └─ For each bit (MSB to LSB):   │
 │         ├─ Extract bit value        │
 │         ├─ Send SIGUSR1 (0) or      │
-│         │  SIGUSR2 (1)               │
+│         │  SIGUSR2 (1)              │
 │         └─ Small delay (usleep)     │
 │                                     │
 └─────────────────────────────────────┘
