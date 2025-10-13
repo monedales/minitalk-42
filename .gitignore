@@ -13,7 +13,6 @@ libft/*.a
 *.dSYM/
 
 # Personal explanation files (keep local)
-guides/
 subject.md
 
 # Test scripts
