@@ -18,6 +18,8 @@ subject.md
 # Test scripts
 test_server.sh
 test_send.py
+tester/
+*.py
 
 # macOS
 .DS_Store
