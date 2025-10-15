@@ -6,7 +6,7 @@
 /*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/15 18:50:09 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/10/15 19:15:05 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/10/15 19:54:41 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ int	main(int argc, char **argv)
 	ft_printf("Client PID: %d\n", getpid());
 	setup_signal_handlers();
 	send_string(server_pid, argv[2]);
+	if (argv[2] == '\0')
+		break ;
 	while (1)
 		pause();
 	return (0);
