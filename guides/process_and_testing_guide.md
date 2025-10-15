@@ -403,13 +403,6 @@ Before submitting your project, test:
    ./client $SERVER_PID "Test message 2"
    kill $SERVER_PID
    ```
-
----
-
-**Happy Testing! 🚀**
-
-*Remember: If something doesn't work, check the server is still running first!*
-
 ---
 
 *Last updated: October 15, 2025*

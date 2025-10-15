@@ -205,12 +205,6 @@ minitalk/
 ├── minitalk_bonus.h       # Bonus header
 └── Makefile               # Updated with bonus targets
 ```
-
-### **Why Split client_bonus.c?**
-- Norminette allows max 5 functions per file
-- If you have more, split into multiple files
-- Common split: `main()` in separate file
-
 ---
 
 ## 🔧 Makefile Bonus Configuration
@@ -267,45 +261,6 @@ $(SERVER_BONUS): $(OBJS_SERVER_BONUS) $(LIBFT)
 python3 tester.py
 # Should pass the 18KB file test with bonus!
 ```
-
----
-
-## ⚠️ Common Pitfalls & Solutions
-
-### **Problem 1: Signal Loss**
-**Symptom:** Server receives incomplete message  
-**Cause:** Client sending signals too fast  
-**Solution:** 
-- Add `while (!g_received) pause();` after each `kill()`
-- Increase `usleep()` delay (100 → 200+)
-
-### **Problem 2: Infinite Wait**
-**Symptom:** Client hangs forever  
-**Cause:** Server not sending acknowledgments  
-**Solution:**
-- Ensure `kill(g_client_pid, SIGUSR2)` after each bit in server
-- Check server's signal handler has correct signature
-
-### **Problem 3: Norminette Errors**
-**Common issues:**
-- Global variables must start with `g_`
-- Max 5 functions per file
-- Max 25 lines per function
-- No consecutive blank lines
-
-**Solutions:**
-- Rename: `client_pid` → `g_client_pid`
-- Split files if needed
-- Remove guide comments
-- Clean up formatting
-
-### **Problem 4: Multiple Definition Error**
-**Symptom:** Linker error about duplicate symbols  
-**Cause:** Global variable defined in header  
-**Solution:**
-- Define in `.c`: `pid_t g_client_pid = 0;`
-- Declare in `.h` only if needed: `extern pid_t g_client_pid;`
-
 ---
 
 ## 📊 Signal Flow Diagram
@@ -395,45 +350,6 @@ CLIENT                                      │
 - Always check `kill()` return value
 - Validate PIDs before use
 - Handle edge cases (null strings, invalid PIDs)
-
----
-
-## 🏆 Bonus Completion Checklist
-
-- [x] Server sends SIGUSR2 after each bit received
-- [x] Server sends SIGUSR1 when message complete ('\0')
-- [x] Client waits for acknowledgment before sending next bit
-- [x] Client displays success message on completion
-- [x] Client shows its own PID
-- [x] Global variables start with `g_`
-- [x] Passes norminette (max 5 functions per file)
-- [x] No consecutive blank lines
-- [x] Compiles with `make bonus`
-- [x] Works with small messages
-- [x] Works with large files (18KB+)
-- [x] Supports Unicode and emojis
-- [x] No memory leaks
-- [x] No signal loss
-
----
-
-## 🚀 Performance Notes
-
-### **Speed:**
-- Bonus is **slower** than mandatory (waits for ACKs)
-- ~100-200 bits per second (vs ~1000+ for mandatory)
-- Trade-off: Speed vs Reliability
-
-### **Reliability:**
-- **100% delivery guarantee** (if implementation correct)
-- Can handle files of any size
-- No signal loss even under heavy load
-
-### **Resource Usage:**
-- Very low CPU usage (mostly waiting)
-- Minimal memory footprint
-- No dynamic allocations in signal path
-
 ---
 
 ## 📚 Additional Resources
@@ -451,32 +367,6 @@ man usleep       # Microsecond delays
 - **Signal Queuing**: Linux doesn't queue duplicate signals
 - **Async-Signal-Safe**: Functions safe to use in signal handlers
 - **Atomic Operations**: Indivisible read/modify/write
-
----
-
-## 💡 Final Tips
-
-1. **Always test with large files** - That's where bugs appear
-2. **Check norminette frequently** - Small issues add up
-3. **Use descriptive variable names** - `g_received` is clear
-4. **Comment your code** - But remove guide comments before submission
-5. **Test Unicode** - Shows robustness
-6. **Validate all inputs** - PIDs, argc, etc.
-7. **Handle errors gracefully** - Always check return values
-
----
-
-**Congratulations on completing the Minitalk Bonus!** 🎉
-
-Your implementation demonstrates:
-- Advanced signal handling
-- Inter-process communication
-- Synchronization techniques
-- Robust error handling
-- Clean, maintainable code
-
-**Ready for submission!** 🚀
-
 ---
 
 *Guide created: October 15, 2025*  
