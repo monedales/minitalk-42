@@ -6,11 +6,11 @@
 /*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 13:41:11 by mona              #+#    #+#             */
-/*   Updated: 2025/10/15 16:49:50 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/10/15 19:13:44 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "includes/minitalk.h"
 
 void	send_char(pid_t server_pid, unsigned char chr)
 {

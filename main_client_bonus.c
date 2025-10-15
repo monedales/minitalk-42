@@ -6,11 +6,11 @@
 /*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/15 18:50:09 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/10/15 18:58:16 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/10/15 19:15:05 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk_bonus.h"
+#include "includes/minitalk_bonus.h"
 
 int	main(int argc, char **argv)
 {

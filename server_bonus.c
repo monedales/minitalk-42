@@ -6,11 +6,11 @@
 /*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/15 17:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/10/15 18:57:06 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/10/15 19:15:16 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk_bonus.h"
+#include "includes/minitalk_bonus.h"
 
 pid_t	g_client_pid = 0;
 
