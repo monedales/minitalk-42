@@ -1,6 +1,8 @@
 # Program names
 CLIENT = client
 SERVER = server
+CLIENT_BONUS = client_bonus
+SERVER_BONUS = server_bonus
 
 # Directories
 SRC_DIR = .
@@ -20,13 +22,13 @@ SRC_CLIENT = client.c
 SRC_SERVER = server.c
 
 # Bonus source files
-# SRC_CLIENT_BONUS = client_bonus.c
-# SRC_SERVER_BONUS = server_bonus.c
+SRC_CLIENT_BONUS = client_bonus.c main_client_bonus.c
+SRC_SERVER_BONUS = server_bonus.c
 
 OBJS_CLIENT = $(addprefix $(OBJ_DIR)/, $(SRC_CLIENT:.c=.o))
 OBJS_SERVER = $(addprefix $(OBJ_DIR)/, $(SRC_SERVER:.c=.o))
-# OBJS_CLIENT_BONUS = $(addprefix $(OBJ_DIR)/, $(SRC_CLIENT_BONUS:.c=.o))
-# OBJS_SERVER_BONUS = $(addprefix $(OBJ_DIR)/, $(SRC_SERVER_BONUS:.c=.o))
+OBJS_CLIENT_BONUS = $(addprefix $(OBJ_DIR)/, $(SRC_CLIENT_BONUS:.c=.o))
+OBJS_SERVER_BONUS = $(addprefix $(OBJ_DIR)/, $(SRC_SERVER_BONUS:.c=.o))
 
 # Libraries
 LIBFT = $(LIBFT_DIR)/libft.a
@@ -53,10 +55,21 @@ banner:
 	@echo "║       MINITALK COMPILED! 🚀            ║"
 	@echo "╔════════════════════════════════════════╗"
 
-bonus:
-	@echo "Bonus not implemented yet"
+bonus: $(CLIENT_BONUS) $(SERVER_BONUS)
 
-.PHONY: all clean fclean re normi banner bonus
+$(CLIENT_BONUS): $(OBJS_CLIENT_BONUS) $(LIBFT)
+	@$(CC) $(CFLAGS) $(OBJS_CLIENT_BONUS) $(LIBFT) -o $(CLIENT_BONUS)
+
+$(SERVER_BONUS): $(OBJS_SERVER_BONUS) $(LIBFT)
+	@$(CC) $(CFLAGS) $(OBJS_SERVER_BONUS) $(LIBFT) -o $(SERVER_BONUS)
+	@$(MAKE) bonus_banner
+
+bonus_banner:
+	@echo "╔════════════════════════════════════════╗"
+	@echo "║     MINITALK BONUS COMPILED! 🌟       ║"
+	@echo "╔════════════════════════════════════════╗"
+
+.PHONY: all clean fclean re normi banner bonus bonus_banner
 
 clean:
 	@$(MAKE) -C $(LIBFT_DIR) clean
@@ -64,7 +77,7 @@ clean:
 
 fclean: clean
 	@$(MAKE) -C $(LIBFT_DIR) fclean
-	@$(RM) $(CLIENT) $(SERVER)
+	@$(RM) $(CLIENT) $(SERVER) $(CLIENT_BONUS) $(SERVER_BONUS)
 
 re: fclean all
 
