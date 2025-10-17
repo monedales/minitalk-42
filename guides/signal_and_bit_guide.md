@@ -1,5 +1,8 @@
 # 📡 Minitalk: Signal Handling & Bit-by-Bit Communication Guide
 
+> **⚡ IMPORTANT:** For the complete working implementation (LSB-first approach that actually works!),  
+> see **`working_implementation_guide.md`** - it has the tested and proven approach! 🗡️
+
 ---
 
 ## 📡 **Part 1: Signal Handling in UNIX**

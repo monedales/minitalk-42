@@ -1,4 +1,7 @@
-# 🌟 Minitalk Bonus Implementation Guide
+# 🌟 Minitalk Bonus: Working Implementation (LSB-First Approach)
+
+> **UPDATE:** This guide now reflects the WORKING approach that passes all testers!  
+> Key changes: LSB-first, no usleep(), proper signal order ✅
 
 ## 📍 Project Completion Date: October 15, 2025
 
