@@ -25,7 +25,7 @@ SRC_BONUS =	\
 OBJS = $(SRC:.c=.o)
 OBJS_BONUS = $(SRC_BONUS:.c=.o)
 
-all: $(NAME) banner
+all: $(NAME)
 
 banner:
 	@echo ""
