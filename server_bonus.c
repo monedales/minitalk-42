@@ -6,7 +6,7 @@
 /*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/15 17:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/10/15 19:15:16 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/10/16 20:35:59 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,50 +21,44 @@ void	signal_handler(int sig, siginfo_t *info, void *context)
 
 	(void)context;
 	g_client_pid = info->si_pid;
-	current_char = current_char << 1;
 	if (sig == SIGUSR2)
-		current_char = current_char | 1;
+		current_char |= (1 << bit_count);
 	bit_count++;
-	kill(g_client_pid, SIGUSR2);
 	if (bit_count == 8)
 	{
 		if (current_char == '\0')
-		{
 			kill(g_client_pid, SIGUSR1);
-		}
 		else
+		{
 			write(1, &current_char, 1);
+			kill(g_client_pid, SIGUSR2);
+		}
 		current_char = 0;
 		bit_count = 0;
 	}
+	else
+		kill(g_client_pid, SIGUSR2);
 }
 
 void	setup_signals(void)
 {
 	struct sigaction	sa;
 
-	sigemptyset(&sa.sa_mask);
 	sa.sa_sigaction = signal_handler;
 	sa.sa_flags = SA_SIGINFO;
-	if (sigaction(SIGUSR1, &sa, NULL) == -1)
-	{
-		ft_error();
-		exit(1);
-	}
-	if (sigaction(SIGUSR2, &sa, NULL) == -1)
-	{
-		ft_error();
-		exit(1);
-	}
+	sigemptyset(&sa.sa_mask);
+	sigaction(SIGUSR1, &sa, NULL);
+	sigaction(SIGUSR2, &sa, NULL);
 }
 
 int	main(void)
 {
-	ft_printf("Server PID: %d\n", getpid());
+	pid_t	server_pid;
+
 	setup_signals();
+	server_pid = getpid();
+	ft_printf("Server PID: %d\n", server_pid);
 	while (1)
-	{
 		pause();
-	}
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 13:41:54 by mona              #+#    #+#             */
-/*   Updated: 2025/10/15 18:48:37 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/10/16 20:35:58 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 void	signal_handler(int sig, siginfo_t *info, void *context);
 void	setup_signals(void);
 void	send_char(pid_t server_pid, unsigned char chr);
-void	send_string(pid_t server_pid, char *str);
 void	setup_signal_handlers(void);
 
 #endif

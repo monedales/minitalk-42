@@ -6,7 +6,7 @@
 /*   By: maria-ol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/15 17:00:00 by maria-ol          #+#    #+#             */
-/*   Updated: 2025/10/15 19:15:10 by maria-ol         ###   ########.fr       */
+/*   Updated: 2025/10/16 20:35:53 by maria-ol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,40 +46,56 @@ void	setup_signal_handlers(void)
 
 void	send_char(pid_t server_pid, unsigned char chr)
 {
-	ssize_t			len;
+	int				i;
 	unsigned int	bit;
 	unsigned int	signal;
 
-	len = 7;
-	while (len >= 0)
+	i = 0;
+	while (i < 8)
 	{
-		bit = (chr >> len) & 1;
+		bit = (chr >> i) & 1;
 		if (bit == 1)
 			signal = SIGUSR2;
 		else
 			signal = SIGUSR1;
+		g_received = 0;
 		if (kill(server_pid, signal) == -1)
 		{
 			ft_error();
 			exit(1);
 		}
-		while (!g_received)
+		while (g_received == 0)
 			pause();
-		g_received = 0;
-		usleep(200);
-		len--;
+		i++;
 	}
 }
 
-void	send_string(pid_t server_pid, char *str)
+int	main(int argc, char **argv)
 {
-	unsigned int	i;
+	pid_t	server_pid;
+	int		i;
 
-	i = 0;
-	while (str[i])
+	if (argc != 3)
 	{
-		send_char(server_pid, (unsigned char)str[i]);
+		ft_printf("Usage: %s <server_pid> <message>\n", argv[0]);
+		return (1);
+	}
+	server_pid = ft_atoi(argv[1]);
+	if (server_pid <= 0)
+	{
+		ft_error();
+		return (1);
+	}
+	ft_printf("Client PID: %d\n", getpid());
+	setup_signal_handlers();
+	i = 0;
+	while (argv[2][i])
+	{
+		send_char(server_pid, (unsigned char)argv[2][i]);
 		i++;
 	}
 	send_char(server_pid, '\0');
+	while (1)
+		pause();
+	return (0);
 }

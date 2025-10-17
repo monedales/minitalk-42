@@ -22,7 +22,7 @@ SRC_CLIENT = client.c
 SRC_SERVER = server.c
 
 # Bonus source files
-SRC_CLIENT_BONUS = client_bonus.c main_client_bonus.c
+SRC_CLIENT_BONUS = client_bonus.c
 SRC_SERVER_BONUS = server_bonus.c
 
 OBJS_CLIENT = $(addprefix $(OBJ_DIR)/, $(SRC_CLIENT:.c=.o))
