@@ -30,6 +30,7 @@ tester/
 *~
 .vscode/
 .idea/
+.nfs*
 
 # GitHub workflows (if not needed)
 .github/
