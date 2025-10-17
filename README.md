@@ -1,4 +1,4 @@
-# minitalk 📡
+# minitalk 📡 🗡️
 
 A client-server communication program using UNIX signals to transmit strings bit by bit, developed as part of the 42 School curriculum to explore inter-process communication and bit manipulation.
 
@@ -41,19 +41,20 @@ The minitalk project implements a communication system between two programs: a *
      └                                     ┘
 ```
 
-### Bit-by-Bit Transmission Example:
+### Bit-by-Bit Transmission Example (LSB-First):
 
 Sending character `'A'` (ASCII 65 = `01000001`):
 ```
-Bit 7 (0) → SIGUSR1 → Server builds: 00000000
-Bit 6 (1) → SIGUSR2 → Server builds: 00000001
-Bit 5 (0) → SIGUSR1 → Server builds: 00000010
-Bit 4 (0) → SIGUSR1 → Server builds: 00000100
-Bit 3 (0) → SIGUSR1 → Server builds: 00001000
-Bit 2 (0) → SIGUSR1 → Server builds: 00010000
-Bit 1 (0) → SIGUSR1 → Server builds: 00100000
-Bit 0 (1) → SIGUSR2 → Server builds: 01000001 = 'A' ✓
+Bit 0 (1) → SIGUSR2 → Server builds: 00000001 ← Set bit 0
+Bit 1 (0) → SIGUSR1 → Server builds: 00000001 ← Keep bit 1 as 0
+Bit 2 (0) → SIGUSR1 → Server builds: 00000001 ← Keep bit 2 as 0
+Bit 3 (0) → SIGUSR1 → Server builds: 00000001 ← Keep bit 3 as 0
+Bit 4 (0) → SIGUSR1 → Server builds: 00000001 ← Keep bit 4 as 0
+Bit 5 (0) → SIGUSR1 → Server builds: 00000001 ← Keep bit 5 as 0
+Bit 6 (1) → SIGUSR2 → Server builds: 01000001 ← Set bit 6
+Bit 7 (0) → SIGUSR1 → Server builds: 01000001 = 'A' ✓
 ```
+
 
 ## Architecture 🏗️
 
@@ -90,56 +91,93 @@ Bit 0 (1) → SIGUSR2 → Server builds: 01000001 = 'A' ✓
 │  1. main()                          │
 │     ├─ Validate arguments           │
 │     ├─ Parse server PID             │
-│     └─ Send string to server        │
+│     ├─ Setup signal handlers        │
+│     └─ Loop through message:        │
+│         ├─ For each character:      │
+│         │   └─ send_char()          │
+│         └─ send_char('\0')          │
 │                                     │
-│  2. send_string()                   │
-│     └─ For each character:          │
-│         └─ send_char()              │
-│                                     │
-│  3. send_char()                     │
-│     └─ For each bit (MSB to LSB):   │
+│  2. send_char()                     │
+│     └─ For each bit (LSB to MSB):   │
 │         ├─ Extract bit value        │
+│         ├─ Reset ACK flag           │
 │         ├─ Send SIGUSR1 (0) or      │
 │         │  SIGUSR2 (1)              │
-│         └─ Small delay (usleep)     │
+│         └─ Wait for ACK (bonus)     │
+│                                     │
+│  3. setup_signal_handlers()         │
+│     ├─ Register SIGUSR2 (ACK)       │
+│     └─ Register SIGUSR1 (DONE)      │
 │                                     │
 └─────────────────────────────────────┘
 ```
 
+### Bonus Architecture:
+```
+┌──────────────────────────────────────┐
+│        ACKNOWLEDGMENT SYSTEM         │
+├──────────────────────────────────────┤
+│                                      │
+│  CLIENT              SERVER          │
+│  ───────────────────────────         │
+│  Send bit ──────►  Receive bit       │
+│                   Store in position  │
+│  Wait for ACK     Send SIGUSR2 ◄──── │
+│  Receive ACK ◄────                   │
+│  Continue...                         │
+│                                      │
+│  (After '\0')     Send SIGUSR1 ◄──── │
+│  "Message done!"                     │
+│  Exit ◄───────                       │
+│                                      │
+└──────────────────────────────────────┘
+```
+
 ## Source Code Structure 📂
 
-### Server Implementation
-- `server.c` - Server program with signal handling and character reconstruction
-  - `main()` - Entry point, prints PID and enters waiting loop
-  - `setup_signals()` - Configures `sigaction` structures for both signals
-  - `signal_handler()` - Receives signals and builds characters bit by bit
-
-### Client Implementation  
-- `client.c` - Client program for sending messages
-  - `main()` - Entry point, validates input and initiates transmission
-  - `send_string()` - Iterates through string and sends each character
-  - `send_char()` - Extracts and transmits individual bits as signals
-
-### Headers & Libraries
-- `minitalk.h` - Main header with function prototypes and includes
-- `libft/` - Custom library with utility functions (`ft_atoi`, `ft_printf`, etc.)
-
-### Additional Files
-- `Makefile` - Build system for compiling both executables
-- `guides/signal_and_bit_guide.md` - Comprehensive guide on signals and bit manipulation
+```
+minitalk/
+├── server.c              # Server: signal_handler(), setup_signals(), main()
+├── server_bonus.c        # Server with ACK system
+├── client.c              # Client: send_char(), main()
+├── client_bonus.c        # Client with ACK handlers
+├── includes/
+│   ├── minitalk.h        # Main header with function prototypes
+│   └── minitalk_bonus.h  # Bonus header (acknowledgment system)
+├── libft/                # Custom library (ft_atoi, ft_printf, etc.)
+├── guides/
+│   ├── working_implementation_guide.md    # Complete LSB-first approach
+│   ├── bonus_implementation_guide.md      # Acknowledgment system details
+│   ├── signal_and_bit_guide.md            # Signal handling fundamentals
+│   └── process_and_testing_guide.md       # Testing strategies
+└── Makefile              # Build system (all/bonus targets)
+```
 
 ## Instructions ⚙️
 
 ### Building the Project
-Run `make` to compile both `client` and `server` executables:
+
+**Mandatory:**
 ```bash
-make
+make          # Compile client and server
+```
+
+**Bonus (with acknowledgments):**
+```bash
+make bonus    # Compile client_bonus and server_bonus
+```
+
+**Both:**
+```bash
+make all && make bonus
 ```
 
 ### Running the Server
 Start the server first (it will display its PID):
 ```bash
-./server
+./server          # Mandatory
+# or
+./server_bonus    # Bonus with ACK system
 ```
 Output example:
 ```
@@ -150,62 +188,133 @@ Server PID: 12345
 Send a message to the server using its PID:
 ```bash
 ./client <server_pid> "Your message here"
-```
-Example:
-```bash
-./client 12345 "Hello, World!"
+# or
+./client_bonus <server_pid> "Your message here"
 ```
 
-The server will display:
+**Examples:**
+```bash
+# Basic test
+./client 12345 "Hello, World!"
+
+# Long message test
+./client 12345 "$(python3 -c 'print("test" * 1000)')"
+
+# Unicode & Emoji test 🗡️
+./client_bonus 12345 "世界 🌍 émojis 🎀
 ```
-Hello, World!
-```
+
+The server will display the received message in real-time!
 
 ### Development Commands
 - Clean object files: `make clean`
 - Remove all generated files: `make fclean`
 - Rebuild from scratch: `make re`
-- Check norminette: `make normi`
+- Check norminette: `norminette *.c *.h`
 
-## Technical Challenges 🧩
+### Terminal Reset (if needed)
+If you see garbage characters after Unicode tests:
+```bash
+reset          # Reset terminal state
+clear          # Clear screen
+```
 
-### Signal Loss Prevention
-Linux doesn't queue multiple signals of the same type. Solution: Add small delays (`usleep(100-500)`) between signal transmissions.
+## Technical Challenges & Solutions 🧩
 
-### Bit Manipulation Operations
+### Signal Loss Prevention ✅
+**Challenge:** Linux doesn't queue multiple signals of the same type.  
+**Solution (Bonus):** Implement acknowledgment system - client waits for server's ACK before sending next bit!
 ```c
-// Extract bit at position i (MSB first)
-bit = (character >> (7 - i)) & 1;
+// Client waits for ACK
+g_received = 0;           // Reset flag
+kill(server_pid, signal); // Send bit
+while (g_received == 0)   // Wait for ACK
+    pause();
+```
 
-// Reconstruct character (shift left + OR)
-character = (character << 1) | bit;
+### Bit Manipulation Operations (LSB-First Approach) ✅
+```c
+// CLIENT: Extract bit at position i (LSB first - bits 0→7)
+bit = (character >> i) & 1;
+
+// SERVER: Reconstruct character (direct bit setting)
+if (signal == SIGUSR2)
+    current_char |= (1 << bit_count);  // Set bit at position
 ```
 
 ### Static Variables in Signal Handlers
 Use static variables to maintain state between signal handler calls:
 ```c
 static char current_char = 0;  // Builds character
-static int bit_count = 0;       // Tracks bits received
+static int  bit_count = 0;     // Tracks bits received (0-7)
+```
+
+### Race Conditions Prevention ✅
+**Critical:** Reset acknowledgment flag BEFORE sending signal:
+```c
+g_received = 0;           // Reset FIRST
+kill(server_pid, signal); // Then send
+while (g_received == 0)   // Then wait
+    pause();
 ```
 
 ## Bonus Features ⭐
 
-- **Server acknowledgment**: Server sends signal back to client after receiving each message
-- **Unicode support**: Extend to handle multi-byte characters (UTF-8)
+### Implemented:
+- ✅ **Server acknowledgment**: Server sends `SIGUSR2` after each bit received
+- ✅ **Completion signal**: Server sends `SIGUSR1` when full message received (`'\0'`)
+- ✅ **Client feedback**: Client prints "Message received by server!" on completion
+- ✅ **Unicode support**: Handles multi-byte UTF-8 characters (emojis, braille, etc.)
+- ✅ **Fast & Reliable**: No artificial delays, pure signal synchronization
 
+### Signal Flow (Bonus):
+```
+CLIENT                          SERVER
+------                          ------
+Send bit 0 (SIGUSR1/2) ────►   Receive & store bit 0
+                               bit_count++
+Wait for ACK...        ◄────   Send SIGUSR2 (ACK)
+Receive ACK ✓
+
+Send bit 1 (SIGUSR1/2) ────►   Receive & store bit 1
+                               bit_count++
+Wait for ACK...        ◄────   Send SIGUSR2 (ACK)
+Receive ACK ✓
+
+... (repeat for bits 2-7)
+
+Send bit 7 (SIGUSR1/2) ────►   Receive & store bit 7
+                               bit_count = 8
+                               Print character!
+Wait for ACK...        ◄────   Send SIGUSR2 (ACK)
+Receive ACK ✓
+
+... (after last '\0')
+                       ◄────   Send SIGUSR1 (DONE)
+"Message received!" ✓
+Exit
+```
 
 ## Useful Links 🔗
 
-### Signal Handling:
+### Project Guides (in `/guides/`):
+- **`working_implementation_guide.md`** ⭐ - Complete working solution
+- `signal_and_bit_guide.md` - Signal handling fundamentals
+- `bonus_implementation_guide.md` - Acknowledgment system
+- `process_and_testing_guide.md` - Testing strategies
 
+### External Resources:
+
+#### Signal Handling:
 - [Signals in C – GeeksforGeeks](https://www.geeksforgeeks.org/signals-c-language/)
+- [sigaction man page](https://man7.org/linux/man-pages/man2/sigaction.2.html)
 
-### Bit Manipulation:
+#### Bit Manipulation:
 - [Bitwise Operators in C – Programiz](https://www.programiz.com/c-programming/bitwise-operators)
 - [Bit Manipulation – GeeksforGeeks](https://www.geeksforgeeks.org/bits-manipulation-important-tactics/)
 - [Interactive Bitwise Visualizer](https://bitwisecmd.com/)
 
-### Video Tutorials:
+#### Video Tutorials:
 - [Unix Signals (CodeVault)](https://www.youtube.com/watch?v=5We_HtLlAbs)
 - [Bitwise Operators in C (Neso Academy)](https://www.youtube.com/watch?v=jlQmeyce65Q)
 
