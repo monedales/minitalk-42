@@ -220,8 +220,11 @@ clear          # Clear screen
 ```
 
 ## Technical Challenges & Solutions 🧩
+<details>
 
-### Signal Loss Prevention ✅
+<summary>Expand</summary>
+
+### Signal Loss Prevention 
 **Challenge:** Linux doesn't queue multiple signals of the same type.  
 **Solution (Bonus):** Implement acknowledgment system - client waits for server's ACK before sending next bit!
 ```c
@@ -232,7 +235,7 @@ while (g_received == 0)   // Wait for ACK
     pause();
 ```
 
-### Bit Manipulation Operations (LSB-First Approach) ✅
+### Bit Manipulation Operations (LSB-First Approach)
 ```c
 // CLIENT: Extract bit at position i (LSB first - bits 0→7)
 bit = (character >> i) & 1;
@@ -249,7 +252,7 @@ static char current_char = 0;  // Builds character
 static int  bit_count = 0;     // Tracks bits received (0-7)
 ```
 
-### Race Conditions Prevention ✅
+### Race Conditions Prevention
 **Critical:** Reset acknowledgment flag BEFORE sending signal:
 ```c
 g_received = 0;           // Reset FIRST
@@ -294,6 +297,7 @@ Receive ACK ✓
 "Message received!" ✓
 Exit
 ```
+</details>
 
 ## Useful Links 🔗
 
